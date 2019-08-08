@@ -56,8 +56,8 @@ function listMods(message){
 
 
   for (member of guild.members.values()){
-    
-    if(permissions.hasMediumPermissions(guild, member.user)){
+
+    if(permissions.hasMediumPermissions(guild, member.user) && !member.user.bot){
       mods.push(member);
     }
   }
@@ -67,10 +67,14 @@ function listMods(message){
     .setDescription("List of all the moderators on the server");
 
   for(mod of mods){
-    if(mod.nickname){
-      embed.addField(mod.user.username, `Nickname: ${mod.nickname}`, true);
-    }else{
-      embed.addField(mod.user.username, "-", true);
+    try{
+      if(mod.nickname){
+        embed.addField(mod.user.username, `Nickname: ${mod.nickname}`, true);
+      }else{
+        embed.addField(mod.user.username, "-", true);
+      }
+    }catch(e){
+      break;
     }
   }
 
