@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
+const request = require('request');
 const mUtil = require('../util/messageUtilities.js');
 const permissions = require('./permissions.js')
+
+const API_URL = "http://127.0.0.1:5000"
 
 const PREFIX = "."
 
@@ -19,7 +22,8 @@ const CommandList = [
   new Command("hello", greeting, "Greets the player."),
   new Command("hello!", greetingExtended, "Greets the player with a mention."),
   new Command("help", showCommands, "Shows list of all the commands."),
-  new Command("mods", listMods, "Shows all the moderaters on the server.")
+  new Command("mods", listMods, "Shows all the moderaters on the server."),
+  new Command("dance", danceGif, "")
 ]
 
 function greeting(message){
@@ -82,5 +86,24 @@ function listMods(message){
 
 }
 
+function danceGif(message){
+
+  url = API_URL+"/gif/random"+"?api_key=123";
+
+  request(url, function(error, response, body){
+
+    if(error){
+      console.log(error);
+      message.channel.send("Oops..., something broke.");
+    }else{
+      data = JSON.parse(body);
+
+      gifURL = data['content'];
+      message.channel.send(gifURL);
+    }
+
+  });
+
+}
 
 module.exports = {CommandList, PREFIX}
