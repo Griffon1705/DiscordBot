@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const mUtil = require('../util/messageUtilities.js');
+const permissions = require('./permissions.js')
 
 const PREFIX = "."
 
@@ -17,7 +18,8 @@ class Command {
 const CommandList = [
   new Command("hello", greeting, "Greets the player."),
   new Command("hello!", greetingExtended, "Greets the player with a mention."),
-  new Command("help", showCommands, "Shows list of all the commands.")
+  new Command("help", showCommands, "Shows list of all the commands."),
+  new Command("mods", listMods, "Shows all the moderaters on the server.")
 ]
 
 function greeting(message){
@@ -43,5 +45,38 @@ function showCommands(message){
     message.channel.send(embed);
 
 }
+
+function listMods(message){
+
+  let guild = message.guild;
+
+  if(guild == null) {return};
+
+  mods = []
+
+
+  for (member of guild.members.values()){
+    
+    if(permissions.hasMediumPermissions(guild, member.user)){
+      mods.push(member);
+    }
+  }
+
+  let embed = new Discord.RichEmbed()
+    .setTitle("Moderators")
+    .setDescription("List of all the moderators on the server");
+
+  for(mod of mods){
+    if(mod.nickname){
+      embed.addField(mod.user.username, `Nickname: ${mod.nickname}`, true);
+    }else{
+      embed.addField(mod.user.username, "-", true);
+    }
+  }
+
+  message.channel.send(embed);
+
+}
+
 
 module.exports = {CommandList, PREFIX}
